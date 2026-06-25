@@ -36,6 +36,34 @@ function Assert-SafeSkillTarget {
     }
 }
 
+function Assert-SafeMemoryTarget {
+    param(
+        [Parameter(Mandatory = $true)][string]$Target,
+        [Parameter(Mandatory = $true)][string]$CodexRoot,
+        [Parameter(Mandatory = $true)][string]$RepositoryRoot
+    )
+
+    $targetPath = (Resolve-FullPath $Target).TrimEnd("\")
+    $blocked = @(
+        (Resolve-FullPath $CodexRoot).TrimEnd("\"),
+        (Resolve-FullPath $RepositoryRoot).TrimEnd("\"),
+        ([System.IO.Path]::GetPathRoot($targetPath)).TrimEnd("\"),
+        ([Environment]::GetFolderPath("UserProfile")).TrimEnd("\"),
+        ([Environment]::GetFolderPath("MyDocuments")).TrimEnd("\")
+    ) | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+
+    foreach ($blockedPath in $blocked) {
+        if (
+            $targetPath.Equals(
+                $blockedPath,
+                [System.StringComparison]::OrdinalIgnoreCase
+            )
+        ) {
+            throw "Refusing to remove unsafe research memory target: $targetPath"
+        }
+    }
+}
+
 if ([string]::IsNullOrWhiteSpace($CodexHome)) {
     if (-not [string]::IsNullOrWhiteSpace($env:CODEX_HOME)) {
         $CodexHome = $env:CODEX_HOME
@@ -52,6 +80,15 @@ if ($RemoveMemory -and [string]::IsNullOrWhiteSpace($MemoryPath)) {
 $resolvedCodexHome = Resolve-FullPath $CodexHome
 $skillsRoot = Join-Path $resolvedCodexHome "skills"
 $skillTarget = Join-Path $skillsRoot "vla-research"
+$repoRoot = Resolve-FullPath (Join-Path $PSScriptRoot "..")
+
+if ($RemoveMemory) {
+    $resolvedMemory = Resolve-FullPath $MemoryPath
+    Assert-SafeMemoryTarget `
+        -Target $resolvedMemory `
+        -CodexRoot $resolvedCodexHome `
+        -RepositoryRoot $repoRoot
+}
 
 Assert-SafeSkillTarget -Target $skillTarget -SkillsRoot $skillsRoot
 Write-Output "Skill target: $skillTarget"
@@ -75,17 +112,6 @@ else {
 }
 
 if ($RemoveMemory) {
-    $resolvedMemory = Resolve-FullPath $MemoryPath
-    $repoRoot = Resolve-FullPath (Join-Path $PSScriptRoot "..")
-    if (
-        $resolvedMemory.Equals(
-            $repoRoot,
-            [System.StringComparison]::OrdinalIgnoreCase
-        )
-    ) {
-        throw "Refusing to remove the repository checkout as research memory."
-    }
-
     Write-Output "Memory target: $resolvedMemory"
     if (Test-Path -LiteralPath $resolvedMemory) {
         Remove-Item -LiteralPath $resolvedMemory -Recurse -Force

@@ -228,8 +228,13 @@ python -m unittest discover -s .\tests -v
 Run the complete release validation after installation:
 
 ```powershell
+python -m pip install --user ".[validation]"
 .\scripts\validate.ps1
 ```
+
+The runtime itself remains standard-library-only. The optional `validation`
+extra installs PyYAML solely because the official Codex skill validator uses
+it.
 
 Tests use temporary Codex and memory directories. They do not modify the real
 Codex home or Documents directory.

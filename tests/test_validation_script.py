@@ -27,6 +27,10 @@ class ValidationScriptTests(unittest.TestCase):
                 "VALUE = 'available'\n",
                 encoding="utf-8",
             )
+            (dependency_dir / "yaml.py").write_text(
+                "__version__ = 'test'\n",
+                encoding="utf-8",
+            )
             fake_validator = temp_path / "quick_validate.py"
             fake_validator.write_text(
                 "import pathlib, sys\n"

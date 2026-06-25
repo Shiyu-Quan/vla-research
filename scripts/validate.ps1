@@ -45,6 +45,14 @@ if (-not (Test-Path -LiteralPath $validator -PathType Leaf)) {
     )
 }
 
+& $PythonCommand -c "import yaml" 2>$null
+if ($LASTEXITCODE -ne 0) {
+    throw (
+        "PyYAML is required by the official skill validator. " +
+        'Install it with: python -m pip install ".[validation]"'
+    )
+}
+
 Write-Output "Running Python tests..."
 & $PythonCommand -m unittest discover `
     -s (Join-Path $repoRoot "tests") `

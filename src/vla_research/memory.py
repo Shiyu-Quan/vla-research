@@ -119,6 +119,9 @@ class ResearchMemory:
         self.save_index(list(existing.values()))
 
         card_path = self._card_path(normalized)
+        for old_card in self.papers_dir.glob(f"{normalized['id']}-*.md"):
+            if old_card != card_path:
+                old_card.unlink()
         card_path.write_text(
             self._render_card(normalized),
             encoding="utf-8",

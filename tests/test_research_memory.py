@@ -80,6 +80,12 @@ class ResearchMemoryTests(unittest.TestCase):
 
         self.assertEqual(updated["notes"], "keep this")
         self.assertEqual(updated["title"], "Fictional VLA Accelerator Revised")
+        cards = list(self.memory.papers_dir.glob("T01-*.md"))
+        self.assertEqual(len(cards), 1)
+        self.assertIn(
+            "Fictional VLA Accelerator Revised",
+            self.memory.get_paper("T01")["card_text"],
+        )
 
     def test_list_gaps_filters_by_priority_and_tag(self):
         self.memory.ensure()

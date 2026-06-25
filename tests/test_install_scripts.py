@@ -183,6 +183,24 @@ class InstallScriptTests(unittest.TestCase):
         self.assertNotEqual(completed.returncode, 0)
         self.assertIn("MemoryPath", completed.stderr + completed.stdout)
 
+    def test_uninstall_refuses_codex_home_as_memory_target(self):
+        self.codex_home.mkdir(parents=True)
+
+        completed = run_script(
+            "uninstall.ps1",
+            "-CodexHome",
+            str(self.codex_home),
+            "-SkipPythonUninstall",
+            "-RemoveMemory",
+            "-MemoryPath",
+            str(self.codex_home),
+            check=False,
+        )
+
+        self.assertNotEqual(completed.returncode, 0)
+        self.assertTrue(self.codex_home.exists())
+        self.assertIn("Refusing", completed.stderr + completed.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

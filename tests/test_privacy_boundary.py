@@ -61,6 +61,7 @@ class PrivacyBoundaryTests(unittest.TestCase):
             "Testing",
         ):
             self.assertIn(heading, text)
+        self.assertIn(".[validation]", text)
 
     def test_apache_license_and_notice_are_present(self):
         license_text = (ROOT / "LICENSE").read_text(encoding="utf-8")

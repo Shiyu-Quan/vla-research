@@ -8,8 +8,11 @@ version = "0.1.0"
 description = "Local VLA hardware/software co-design research memory and MCP server"
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "Apache-2.0" }
+license = "Apache-2.0"
 dependencies = []
+
+[project.optional-dependencies]
+validation = ["PyYAML>=6"]
 
 [project.scripts]
 vla-research = "vla_research.cli:main"
