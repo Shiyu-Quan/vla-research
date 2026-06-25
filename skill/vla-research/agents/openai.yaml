@@ -1,0 +1,14 @@
+interface:
+  display_name: "VLA Research"
+  short_description: "Research VLA papers, hardware metrics, gaps, and thesis directions."
+  default_prompt: "Use $vla-research for this VLA task, automatically adding academic-research-suite only when rigorous scoping, literature review, synthesis, verification, writing, review, or experiment planning is needed."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "vla_research"
+      description: "Local MCP server for the VLA research memory."
+      transport: "stdio"
+
+policy:
+  allow_implicit_invocation: true
