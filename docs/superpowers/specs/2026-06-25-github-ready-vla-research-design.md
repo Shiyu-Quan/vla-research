@@ -12,12 +12,8 @@ paths, or copied Academic Research Suite (ARS) content.
 
 ## Repository Location
 
-Develop the public package in the isolated repository:
-
-`D:\papers\vla-research`
-
-Do not publish files directly from the private research workspace or the
-author's installed Codex skill directory.
+Develop the public package in an isolated repository that contains no private
+research workspace files or installed-skill state.
 
 ## Architecture
 
@@ -168,7 +164,8 @@ Installation behavior:
 3. Copy `skill/vla-research` into the selected Codex skills directory.
 4. Initialize the memory from `research-memory-template` without overwriting
    existing files.
-5. Print a complete TOML block for registering the MCP server.
+5. Print a complete TOML block that invokes the resolved Python executable
+   with `-m vla_research.server`, avoiding reliance on the user Scripts PATH.
 6. Run a CLI and MCP smoke test.
 7. Tell the user to restart or open a new Codex session.
 
