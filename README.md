@@ -76,7 +76,8 @@ Typical configuration:
 
 ```toml
 [mcp_servers.vla_research]
-command = "vla-research-mcp"
+command = "C:\\path\\to\\python.exe"
+args = ["-m", "vla_research.server"]
 startup_timeout_sec = 30
 
 [mcp_servers.vla_research.env]

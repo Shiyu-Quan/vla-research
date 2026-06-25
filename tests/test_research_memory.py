@@ -17,8 +17,8 @@ class ResearchMemoryTests(unittest.TestCase):
 
     def test_slugify_keeps_readable_ascii_prefix(self):
         self.assertEqual(
-            slugify("A 102.5-Hz Real-Time FPGA Action Accelerator"),
-            "a-102-5-hz-real-time-fpga-action-accelerator",
+            slugify("An 88.0-Hz Fictional FPGA Action Accelerator"),
+            "an-88-0-hz-fictional-fpga-action-accelerator",
         )
 
     def test_ensure_creates_empty_memory(self):

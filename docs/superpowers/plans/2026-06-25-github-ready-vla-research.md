@@ -274,8 +274,7 @@ def test_skill_contains_no_private_paths(self):
         path.read_text(encoding="utf-8")
         for path in SKILL_ROOT.rglob("*") if path.is_file()
     )
-    self.assertNotRegex(text, r"[A-Za-z]:\\Users\\")
-    self.assertNotIn("D:\\papers\\", text)
+    self.assertNotRegex(text, PRIVATE_ABSOLUTE_PATH_PATTERN)
 
 def test_skill_routes_complex_research_to_optional_ars(self):
     text = (SKILL_ROOT / "SKILL.md").read_text(encoding="utf-8")
@@ -401,7 +400,8 @@ or `SKIPPED`.
 
 ```toml
 [mcp_servers.vla_research]
-command = "vla-research-mcp"
+command = "<resolved-python-executable>"
+args = ["-m", "vla_research.server"]
 startup_timeout_sec = 30
 
 [mcp_servers.vla_research.env]
@@ -444,8 +444,8 @@ git commit -m "feat: add Windows lifecycle scripts"
 
 ```python
 FORBIDDEN_TEXT = [
-    "C:\\Users\\zhang",
-    "D:\\papers\\VLA",
+    "<author-profile-path>",
+    "<private-research-workspace>",
 ]
 
 def test_repository_has_no_private_signatures_or_pdf_files(self):
@@ -571,7 +571,7 @@ Codex or Documents files change.
 ```powershell
 git status --short
 git ls-files
-git grep -n -I -e "C:\\Users\\" -e "D:\\papers\\"
+python -m unittest tests.test_privacy_boundary -v
 git ls-files "*.pdf"
 ```
 

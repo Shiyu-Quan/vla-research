@@ -106,6 +106,7 @@ class InstallScriptTests(unittest.TestCase):
         self.assertTrue((self.memory / "papers" / "index.json").exists())
         self.assertIn(str(self.memory.resolve()), completed.stdout)
         self.assertIn("[mcp_servers.vla_research]", completed.stdout)
+        self.assertIn('args = ["-m", "vla_research.server"]', completed.stdout)
         self.assertIn("VLA_RESEARCH_MEMORY", completed.stdout)
 
     def test_install_preserves_existing_skill_without_force(self):

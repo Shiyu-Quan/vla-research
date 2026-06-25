@@ -1,4 +1,5 @@
 import unittest
+import re
 from pathlib import Path
 
 
@@ -14,10 +15,11 @@ TEXT_SUFFIXES = {
     ".txt",
     ".gitignore",
 }
-FORBIDDEN_TEXT = (
-    "C:\\Users\\zhang",
-    "D:\\papers\\VLA",
+PRIVATE_PATH_PATTERN = re.compile(
+    r"[A-Za-z]:\\+(?:Users|papers)\\+",
+    re.IGNORECASE,
 )
+PRIVATE_AUTHOR_TOKEN = "zha" + "ng"
 
 
 def source_files():
@@ -25,20 +27,27 @@ def source_files():
     for path in ROOT.rglob("*"):
         if not path.is_file():
             continue
-        if excluded_parts.intersection(path.parts):
+        relative = path.relative_to(ROOT)
+        if excluded_parts.intersection(relative.parts):
             continue
         yield path
 
 
 class PrivacyBoundaryTests(unittest.TestCase):
     def test_repository_has_no_private_signatures_or_pdf_files(self):
+        scanned = 0
         for path in source_files():
+            scanned += 1
             if path.suffix.lower() == ".pdf":
                 self.fail(f"PDF must not be published: {path}")
             if path.suffix.lower() in TEXT_SUFFIXES or path.name == ".gitignore":
                 text = path.read_text(encoding="utf-8")
-                for pattern in FORBIDDEN_TEXT:
-                    self.assertNotIn(pattern, text, str(path))
+                self.assertIsNone(
+                    PRIVATE_PATH_PATTERN.search(text),
+                    str(path),
+                )
+                self.assertNotIn(PRIVATE_AUTHOR_TOKEN, text.lower(), str(path))
+        self.assertGreater(scanned, 10)
 
     def test_readme_documents_release_workflows(self):
         text = (ROOT / "README.md").read_text(encoding="utf-8")

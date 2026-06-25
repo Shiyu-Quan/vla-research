@@ -63,6 +63,7 @@ $resolvedCodexHome = Resolve-FullPath $CodexHome
 $resolvedMemory = Resolve-FullPath $MemoryPath
 $skillsRoot = Join-Path $resolvedCodexHome "skills"
 $skillTarget = Join-Path $skillsRoot "vla-research"
+$pythonExecutable = (Get-Command $PythonCommand -ErrorAction Stop).Source
 
 if (-not $SkipPythonInstall) {
     $versionText = & $PythonCommand -c (
@@ -134,11 +135,13 @@ else {
 }
 
 $escapedMemory = $resolvedMemory.Replace("\", "\\")
+$escapedPython = $pythonExecutable.Replace("\", "\\")
 Write-Output ""
 Write-Output "Add this block to your Codex config.toml:"
 Write-Output ""
 Write-Output "[mcp_servers.vla_research]"
-Write-Output 'command = "vla-research-mcp"'
+Write-Output ('command = "' + $escapedPython + '"')
+Write-Output 'args = ["-m", "vla_research.server"]'
 Write-Output "startup_timeout_sec = 30"
 Write-Output ""
 Write-Output "[mcp_servers.vla_research.env]"
